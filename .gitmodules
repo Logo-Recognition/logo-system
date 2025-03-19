@@ -1,0 +1,6 @@
+[submodule "logo-backend"]
+	path = logo-backend
+	url = https://github.com/Logo-Recognition/logo-api.git
+[submodule "logo-frontend"]
+	path = logo-frontend
+	url = https://github.com/Logo-Recognition/logo-frontend.git
