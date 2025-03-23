@@ -5,8 +5,9 @@ services:
       dockerfile: dockerfile
       args:
         API_PORT: ${API_PORT}
-    container_name: logo-backend
     environment:
+      API_PORT: ${API_PORT}
+
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_USER: ${DB_USER}
