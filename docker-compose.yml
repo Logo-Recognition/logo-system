@@ -1,14 +1,12 @@
 services:
   backend:
-    image: flask-logo
     build:
-      context: .
+      context: ./logo-backend
       dockerfile: dockerfile
       args:
         API_PORT: ${API_PORT}
+    container_name: logo-backend
     environment:
-      NGINX_HOST: ${NGINX_HOST}
-
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_USER: ${DB_USER}
@@ -29,37 +27,33 @@ services:
       TWEEPY_ACCESS_TOKEN_MAIN: ${TWEEPY_ACCESS_TOKEN_MAIN}
       TWEEPY_ACCESS_TOKEN_SECRET_MAIN: ${TWEEPY_ACCESS_TOKEN_SECRET_MAIN}
     ports:
-      - ${API_PORT}:5000
-    hostname: flask
+      - "${API_PORT}:5000"
     volumes:
-      - /backend:/app
-      - /model:/app/model
+      - ${MODEL_PATH}:/app/model
     depends_on:
       - postgres
       - minio
 
   frontend:
-    build: ./frontend
-    volumes:
-      - ./frontend:/app
-    environment:
-      VITE_API_HOST: ${NGINX_HOST}
+    build:
+      context: ./logo-frontend
     ports:
       - "8080"
     depends_on:
       - backend
-  
+
   nginx:
-    image: nginx:latest
+    build: ./logo-proxy
     volumes:
-      - ./nginx.conf.template:/etc/nginx/nginx.conf.template
+      - ./logo-proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./logo-proxy/default.template:/etc/nginx/conf.d/default.template:ro
+    ports:
+      - "80:80"
     environment:
-      NGINX_HOST: ${NGINX_HOST}
       MINIO_API_PORT: ${MINIO_API_PORT}
       MINIO_CONSOLE_PORT: ${MINIO_CONSOLE_PORT}
       API_PORT: ${API_PORT}
       FRONTEND_PORT: ${FRONTEND_PORT}
-    entrypoint: ["/bin/bash", "script-nginx.sh"]
     depends_on:
       - backend
       - frontend
@@ -83,11 +77,12 @@ services:
     volumes:
       - minio_data:/data
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY}
       MINIO_CORS_ALLOW_METHODS: GET,PUT,POST,DELETE
       MINIO_CORS_ALLOW_HEADERS: Authorization,Content-Type,Cache-Control,X-Amz-Date,X-Amz-Security-Token
-    command: server /data --console-address ":${MINIO_CONSOLE_PORT}" --address ":${MINIO_API_PORT}" --anonymous
+      MINIO_BROWSER_REDIRECT_URL: "http://minio:${MINIO_CONSOLE_PORT}/minio-console/"
+    command: server /data --console-address ":${MINIO_CONSOLE_PORT}" --address ":${MINIO_API_PORT}"
 
 volumes:
   postgres-data:
