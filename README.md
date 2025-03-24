@@ -6,8 +6,8 @@ Follow these steps to set up and run the application.
 
 ### 1. Clone the Repository (Including Submodules)
 ```sh
-git clone --recurse-submodules https://github.com/yourusername/your-repository.git
-cd your-repository
+git clone --recurse-submodules https://github.com/Logo-Recognition/logo-system.git
+cd logo-system
 ```
 
 If you have already cloned the repository without submodules, you can initialize and update them manually:
@@ -61,7 +61,7 @@ These variables are used to authenticate and interact with the Twitter API using
 - `TWEEPY_ACCESS_TOKEN_SECRET_MAIN` → The secret key for the access token, required for secure API authentication.
 
 ### 3. Download the Required Model
-Download the necessary model files and place them in the directory of your choice. Then, set the `MODEL_PATH` variable in the `.env` file to point to this directory.
+Download the necessary model and class name files (on release) and place them in the directory of your choice. Then, set the `MODEL_PATH` variable in the `.env` file to point to this directory.
 ```sh
 # Edit .env and set MODEL_PATH=/path/to/your/model/directory
 ```
