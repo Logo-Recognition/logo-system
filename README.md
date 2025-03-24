@@ -1,4 +1,4 @@
-# Project Name
+# Logo Identification
 
 ## Setup Instructions
 
